@@ -1,0 +1,11 @@
+pandas
+openai
+tiktoken
+textract
+PyPDF2
+matplotlib
+numpy
+plotly
+scipy
+scikit-learn
+python-docx
