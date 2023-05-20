@@ -1,6 +1,8 @@
-Scripts
-Lib
-Include
+/Scripts
+/Lib
+/Include
 pyvenv.cfg
-etc
-share
+/etc
+/share
+/src/__pycache__
+

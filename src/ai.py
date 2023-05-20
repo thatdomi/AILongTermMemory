@@ -3,8 +3,6 @@ import openai
 import tiktoken
 import os
 from scipy import spatial
-from openai.embeddings_utils import get_embedding, cosine_similarity
-
 
 class EmbeddingAI:
     def __init__(self, n_tokens: int, model_embedding: str):
@@ -13,8 +11,12 @@ class EmbeddingAI:
         self.model_embedding = model_embedding
         self.encoding = tiktoken.encoding_for_model(self.model_embedding)
         self.tokenizer = tiktoken.get_encoding(self.encoding.name)
-        openai.organization = "" #os.getenv("OPENAI_ORG")
-        openai.api_key = "" #os.getenv("OPENAI_API_KEY")
+        
+        openai.organization = os.environ.get("OPENAI_ORG", "")
+        openai.api_key = os.environ.get("OPENAI_API_KEY", "")
+        
+        if not openai.organization or not openai.api_key:
+            print("OpenAI environment variables not found. Please set OPENAI_ORG and OPENAI_API_KEY.")
 
     ### tokenization
     def __create_chunks(self, text):
@@ -43,7 +45,7 @@ class EmbeddingAI:
     
     ### Embeddings
     def get_embedding(self, text) -> tuple:
-        text = text.replace("\n", " ")
+        #text = text.replace("\n", " ")
         embedding = openai.Embedding.create(input = [text], model=self.model_embedding)['data'][0]['embedding']
         print(embedding)
         return (text, embedding)
@@ -86,12 +88,6 @@ class EmbeddingSearchAI(EmbeddingAI):
         strings, relatednesses = zip(*strings_and_relatednesses)
         return strings[:top_n], relatednesses[:top_n]
 
-    #strings, relatednesses = get_strings_ranked_by_relatedness(query, df, top_n=5)
-    #for string, relatedness in zip(strings, relatednesses):
-    #    print(f"{relatedness=:.3f}")
-    #    display(string)
-
-
     def query_message(
         self,
         query: str,
@@ -107,7 +103,7 @@ class EmbeddingSearchAI(EmbeddingAI):
         counter = 0
         for string in strings:
             counter = counter+1
-            next_article = f'\n\n\nDatabase Result {counter}:\n"""\n{string}\n"""'
+            next_article = f'\n\nDatabase Result {counter}:\n"""\n{string}\n"""'
             if (
                 self.get_num_tokens(message + next_article)
                 > token_budget

@@ -5,7 +5,6 @@ from datetime import datetime
 import shutil
 
 class EmbeddingManager:
-    
     @staticmethod
     def get_embedding_df(embeddings):
         columns = ["text", "embedding"]
@@ -38,25 +37,34 @@ class EmbeddingManager:
             new_filename = f"{base_path}_{counter}{ext}"
             counter += 1
         
-        df.to_csv(new_filename, sep=",", encoding="utf8", index=False, )
+        df.to_csv(new_filename, sep=",", encoding="utf-8", index=False, )
         print(f"DataFrame exported to {new_filename}")
         
         return new_filename
             
-    
+
     @staticmethod
     def get_embedding_single(path: str) -> pd.DataFrame:
-        """reads embedding file and converts embeddings from string to list"""
+        """Reads embedding file and converts embeddings from string to list"""
         try:
-            df = pd.read_csv(path)
+            with open(path, "r", errors = 'backslashreplace') as file:
+                print(f"reading file :{path}")
+                df = pd.read_csv(file, sep=",", encoding="utf-8")
         except FileNotFoundError:
             print("File not found. Please check the file path.")
         except pd.errors.ParserError:
             print("Error parsing the CSV file. Please ensure it is in the correct format.")
         except Exception as e:
-            print("An error occurred:", str(e))   
-        
-        df['embedding'] = df['embedding'].apply(ast.literal_eval)
+            print("An error occurred while reading file :", str(e))
+
+        try:
+            df['embedding'] = df['embedding'].apply(ast.literal_eval)
+        except SyntaxError:
+            print("Error converting embeddings. Invalid format in 'embedding' column.")
+            return pd.DataFrame()
+        except Exception as e:
+            print("An error occurred while converting embeddings:", str(e))
+            return pd.DataFrame()
         return df
 
     @staticmethod

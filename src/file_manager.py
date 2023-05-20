@@ -4,31 +4,50 @@ import docx
 class CustomPdfReader:
     @staticmethod
     def extract_text_from_page(page) -> str:
-        text = page.extract_text()
+        try:
+            text = page.extract_text()
+        except Exception as e:
+            print(f"Error extracting text from page: {e}")
+            return ""
         return text
     
     @staticmethod
     def cleanup_text(text) -> str:
-        clean_text = text.replace("  ", " ").replace("\n", "; ").replace(';', ' ')
-        return clean_text
+        cleaned_text = text.replace("\n\n", "\n")
+        cleaned_text = ' '.join(cleaned_text.split())
+        return cleaned_text
 
     @staticmethod
     def extract_text_from_pdf(path) -> str:
-        full_text = ""
-        reader = PdfReader(path)
-        for i in range(0, len(reader.pages)):
-            text = CustomPdfReader.extract_text_from_page(reader.pages[i])
-            clean_text = CustomPdfReader.cleanup_text(text)
-            full_text += clean_text
-    
-        return full_text 
+        try:
+            reader = PdfReader(path)
+        except FileNotFoundError:
+            print(f"File not found: {path}")
+            return ""
+        except Exception as e:
+            print(f"Error reading PDF file: {e}")
+            return ""
+        
+        extracted_text = ""
+        for page in reader.pages:
+            page_text = CustomPdfReader.extract_text_from_page(page)
+            if page_text:
+                cleaned_text = CustomPdfReader.cleanup_text(page_text)
+                extracted_text += cleaned_text + " "
+        
+        return extracted_text.strip()
 
 class CustomWordReader:
     @staticmethod
     def extract_text_from_docx(path) -> str:
-        doc = docx.Document(path)
-        fullText = []
-        for para in doc.paragraphs:
-            fullText.append(para.text)
-        return '\n'.join(fullText)
+        try:
+            doc = docx.Document(path)
+        except FileNotFoundError:
+            print(f"File not found: {path}")
+            return ""
+        except Exception as e:
+            print(f"Error reading DOCX file: {e}")
+            return ""
         
+        extracted_text = '\n'.join(para.text for para in doc.paragraphs)
+        return extracted_text
