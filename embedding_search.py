@@ -25,7 +25,7 @@ embedding_manager = EmbeddingManager()
 df = embedding_manager.get_embedding_all(directory_out)
 
 
-system_message = "You answer questions about Laws of the Swiss Confederation"
+system_message = "You answer questions about technical documentations"
 query_introduction = "You get the most relevant results from a database below to answer the question. If the answer cannot be found in the database, write 'I was not able to find an answer.' and try to give a more general answer about the topic. Answer the question in the language in which it was asked."
 embedding_search_ai = EmbeddingSearchAI(n_tokens=N_TOKENS, model_embedding=EMBEDDING_MODEL, model_chat=GPT_MODEL, query_system_message=system_message)
 
@@ -38,6 +38,6 @@ while running:
         print("Exiting the program...")
     else:
         # Process the user input
-        print("Processing input:", user_input)
-        answer = embedding_search_ai.ask(query=user_input, query_introduction=query_introduction, df=df, print_message=True)
-        print(answer)
+        print(f"\nQuestion: \n{user_input}")
+        answer = embedding_search_ai.ask(query=user_input, query_introduction=query_introduction, df=df, print_message=False)
+        print(f"\nAnswer: \n{answer}")
