@@ -12,12 +12,6 @@ class EmbeddingAI:
         self.encoding = tiktoken.encoding_for_model(self.model_embedding)
         self.tokenizer = tiktoken.get_encoding(self.encoding.name)
         
-        openai.organization = os.environ.get("OPENAI_ORG", "")
-        openai.api_key = os.environ.get("OPENAI_API_KEY", "")
-        
-        if not openai.organization or not openai.api_key:
-            print("OpenAI environment variables not found. Please set OPENAI_ORG and OPENAI_API_KEY.")
-
     ### tokenization
     def __create_chunks(self, text):
         tokens = self.tokenizer.encode(text)

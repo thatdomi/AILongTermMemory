@@ -1,12 +1,15 @@
-combination with other techniques like summarization
-small filter & large filter window (summary & spezifika)
-Prompting
-- maybe more open but less spezific
-decision trees?
+# OpenAI Embeddings Demo
+This project shows the use of OpenAI embeddings to extend the capabilities of ChatGPT to answer questions about specific technical documentations.
 
-annotation like, title, labeled data
+## Requirements
+- OpenAI API Key
+- Setup a python venv and install the requirements in requirements.txt
 
-weighted
+## Create Embeddings
+Put Documents (.pdf or .docx) in the data/raw folder and run create_embeddings.py to create embeddings
 
+## Ask Questions
+Run embedding_search.py to ask questions about the documents you created embeddings for. You may have to change the system string in embedding_search.py to expand answers to non technical documentations.
 
-pre summarization to allow longer conversations?
+## Code
+This code is an adaption from the examples provided by OpenAI here: https://github.com/openai/openai-cookbook/tree/main/examples
