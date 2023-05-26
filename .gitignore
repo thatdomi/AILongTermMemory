@@ -5,4 +5,7 @@ pyvenv.cfg
 /etc
 /share
 /src/__pycache__
+__pycache__/
+*.pyc[cod]
+*$py.class
 
