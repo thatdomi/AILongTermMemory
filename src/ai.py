@@ -19,9 +19,9 @@ class EmbeddingAI:
         """Yield successive n-sized chunks from text."""
         i = 0
         while i < len(tokens):
-            # Find the nearest end of sentence within a range of 0.5 * n and 1.5 * n tokens
-            j = min(i + int(1.5 * n), len(tokens))
-            while j > i + int(0.5 * n):
+            # Find the nearest end of sentence within a range of 0.7 * n and 1.3 * n tokens
+            j = min(i + int(1.3 * n), len(tokens))
+            while j > i + int(0.7 * n):
                 # Decode the tokens and check for full stop or newline
                 chunk = self.tokenizer.decode(tokens[i:j])
                 if chunk.endswith(".") or chunk.endswith("\n"):
@@ -37,6 +37,10 @@ class EmbeddingAI:
         chunks = self.__create_chunks(text)
         return [self.tokenizer.decode(chunk) for chunk in chunks]
     
+    def get_tokencount_in_text(self, text) -> int:
+        tokens = self.tokenizer.encode(text)
+        return len(tokens)
+
     ### Embeddings
     def get_embedding(self, text) -> tuple:
         #text = text.replace("\n", " ")
@@ -49,6 +53,10 @@ class EmbeddingAI:
     #    tokenizer = tiktoken.get_encoding(encoding_name)
     #    num_tokens = len(tokenizer.encode(string))
     #    return num_tokens
+
+class AdminCHEmbeddingAI(EmbeddingAI):
+    def __init__(self, n_tokens: int, model_embedding: str):
+        super().__init__(n_tokens, model_embedding)
 
 class EmbeddingSearchAI(EmbeddingAI):
     def __init__(self, n_tokens: int, model_embedding: str, model_chat: str, query_system_message: str):
@@ -131,3 +139,4 @@ class EmbeddingSearchAI(EmbeddingAI):
         )
         response_message = response["choices"][0]["message"]["content"]
         return response_message
+

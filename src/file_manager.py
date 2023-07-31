@@ -1,5 +1,6 @@
 from PyPDF2 import PdfReader
 import docx
+import pandas as pd
 
 class CustomPdfReader:
     @staticmethod
@@ -51,3 +52,19 @@ class CustomWordReader:
         
         extracted_text = '\n'.join(para.text for para in doc.paragraphs)
         return extracted_text
+
+class CSVHandler:
+    @staticmethod
+    def load_csv_to_df(path) -> pd.DataFrame:
+        try:
+            df = pd.read_csv(path)
+        except FileNotFoundError:
+            print(f"File not found: {path}")
+            return ""
+        except Exception as e:
+            print(f"Error reading csv file: {e}")
+            return ""
+        df = pd.read_csv(path)
+        return df
+
+

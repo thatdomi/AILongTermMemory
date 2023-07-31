@@ -26,10 +26,15 @@ class EmbeddingManager:
             print("An error occurred:", str(e))
 
     @staticmethod
-    def invoke_embedding_export(df: pd.DataFrame, directory_out: str, filename: str, tokens: int) -> str:
+    def invoke_embedding_export(df: pd.DataFrame, directory_out: str, filename: str, tokens=None) -> str:
         current_datetime = datetime.now().strftime("%Y%m%d")
-        full_filepath = directory_out+"\\"+current_datetime+"-"+filename+"-"+str(tokens)+".csv"
-        
+        if(tokens):
+            suffix = "-"+str(tokens)
+        else:
+            suffix = ""
+        full_filepath = directory_out+"\\"+current_datetime+"-"+filename+f"{suffix}.csv"
+        full_filepath = full_filepath.replace(" ", "_")
+
         base_path, ext = os.path.splitext(full_filepath)
         counter = 1
         new_filename = full_filepath
@@ -79,3 +84,4 @@ class EmbeddingManager:
                 else:
                     df_all = pd.concat([df_all,df], ignore_index=True)
         return df_all
+    

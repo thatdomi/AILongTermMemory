@@ -104,32 +104,35 @@ class AdminCHCrawler(CustomCrawler):
 
     def _save_law_information_to_disk(self, df, encoding="UTF-8"):
         filepath = f"{self.export_folder}\\{df['srnummer'][0]}_{df['erlasstitel'][0]}.csv" 
-        df.to_csv(filepath, encoding=encoding)
+        df.to_csv(filepath, encoding=encoding, index=False)
         print(f"file saved to {filepath}")
     
     def full_send(self):
         self._lazy_init_selenium()
         for url in self.urls:
-            html = crawler.get_js_webpage(url)
-            soup = crawler.get_the_soup(html)
-            crawler.get_law_information(url, soup)
+            html = self.get_js_webpage(url)
+            soup = self.get_the_soup(html)
+            self.get_law_information(url, soup)
             self.convert_internally_stored_law_information_to_df()
 
+        # Close selenium driver
+        self.driver.quit()
         
 if __name__ == "__main__":
     EXPORT_PATH = ".\\data\\crawled"
     EXPORT_DEFAULT = True
 
     name = "admin_ch"
-    urls = ['https://www.fedlex.admin.ch/eli/cc/1988/506_506_506/de',
-            'https://www.fedlex.admin.ch/eli/cc/1988/517_517_517/de']  # Replace with the URL of the webpage you want to crawl
-    #url = 'https://www.fedlex.admin.ch/eli/cc/1988/506_506_506/de'
-
+    urls = [
+        'https://www.fedlex.admin.ch/eli/cc/1988/506_506_506/de',
+        'https://www.fedlex.admin.ch/eli/cc/1988/517_517_517/de',
+        'https://www.fedlex.admin.ch/eli/cc/1991/2304_2304_2304/de',
+        'https://www.fedlex.admin.ch/eli/cc/1991/298_298_298/de'
+        ]
 
     crawler = AdminCHCrawler(name=name, urls=urls, export_folder=EXPORT_PATH, export_default=EXPORT_DEFAULT)
     crawler.full_send()
-    
-    
+
     
     #crawler._lazy_init_selenium()
     #html = crawler.get_js_webpage(url)
